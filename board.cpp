@@ -43,7 +43,7 @@ void Board::updateLabels()
     if( model != nullptr ) {
         for( size_t r = 0; r < rows; ++r )
             for( size_t c = 0; c < columns; ++c ) {
-                auto mk = model->at(r, c);
+                auto mk = model->valueAt(r, c);
                 auto sk = mk == 0 ? QString{""} : QString::number(mk);
                 tiles[r * rows + c]->setText(sk);
             }

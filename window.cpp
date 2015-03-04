@@ -19,6 +19,5 @@ Window::Window( QWidget* parent )
 
 /**/
 Window::~Window()
-{
-}
+{}
 

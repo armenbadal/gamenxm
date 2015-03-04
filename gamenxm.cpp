@@ -4,6 +4,12 @@
 GameNxM::GameNxM( unsigned int rw, unsigned int cl )
     : rows{rw}, columns{cl}
 {
+    reset();
+}
+
+/**/
+void GameNxM::reset()
+{
     // ամբողջ մատրիցի նախապատրաստում
     for( uint r = 0; r < rows + 2; ++r )
         matrix.push_back( QVector<int>(columns + 2, -1) );
@@ -42,12 +48,7 @@ GameNxM::GameNxM( unsigned int rw, unsigned int cl )
 }
 
 /**/
-GameNxM::~GameNxM()
-{
-}
-
-/**/
-void GameNxM::step(unsigned int rw , unsigned int cl )
+void GameNxM::step( unsigned int rw , unsigned int cl )
 {
     if( matrix[rw-1][cl] == 0 )
         qSwap(matrix[rw][cl], matrix[rw-1][cl]);
@@ -60,7 +61,7 @@ void GameNxM::step(unsigned int rw , unsigned int cl )
 }
 
 /**/
-int GameNxM::at( unsigned int ro, unsigned int cl ) const
+int GameNxM::valueAt( unsigned int ro, unsigned int cl ) const
 {
     return matrix.at(ro+1).at(cl+1);
 }
