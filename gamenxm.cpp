@@ -64,3 +64,4 @@ int GameNxM::at( unsigned int ro, unsigned int cl ) const
 {
     return matrix.at(ro+1).at(cl+1);
 }
+

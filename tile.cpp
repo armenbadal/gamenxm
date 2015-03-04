@@ -30,3 +30,4 @@ void Tile::mousePressEvent( QMouseEvent* event )
     Q_UNUSED(event)
     emit clicked(row, column);
 }
+
