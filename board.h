@@ -7,30 +7,33 @@
 class Tile;
 class GameNxM;
 
-/**/
+/** @brief Խաղադաշտը */
 class Board : public QWidget {
     Q_OBJECT
 
 public:
-    Board( unsigned int rw, unsigned int cl, QWidget* parent = nullptr );
-    ~Board();
+    Board( unsigned int, unsigned int, QWidget* = nullptr );
 
-    void setModel( GameNxM* mo );
+    void setModel( GameNxM* );
 
 private:
+	/** @brief Թարմացնել խաղաքարերի թվերը */
     void updateLabels();
 
 private:
+    /// @brief տողերի քանակը
     unsigned int rows = 0;
+    /// @brief սյուների քանակը
     unsigned int columns = 0;
+    /// @brief խաղաքարերի ցուցակ
     QVector<Tile*> tiles;
 
+    /// @brief ցուցիչ խաղի մոդելին
     GameNxM* model = nullptr;
 
-signals:
-
 private slots:
-    void clickedOnTile( unsigned int r, unsigned int c );
+    /** @brief Խաղաքարի ընտրության մշակում */
+    void clickedOnTile( unsigned int, unsigned int );
 };
 
 #endif // BOARD_H

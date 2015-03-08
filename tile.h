@@ -6,16 +6,17 @@
 
 class QMouseEvent;
 
-/**/
+/** @brief Խաղաքար */
 class Tile : public QLabel {
     Q_OBJECT
 
 public:
     Tile( unsigned int rw, unsigned int cl, QWidget* parent = nullptr );
-    ~Tile();
 
 private:
+    /// @brief տողը
     unsigned int row;
+    /// @brief սյունը
     unsigned int column;
 
 signals:
@@ -26,3 +27,4 @@ protected:
 };
 
 #endif // TILE_H
+

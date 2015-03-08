@@ -21,10 +21,6 @@ Tile::Tile( unsigned int rw, unsigned int cl, QWidget* parent )
 }
 
 /**/
-Tile::~Tile()
-{}
-
-/**/
 void Tile::mousePressEvent( QMouseEvent* event )
 {
     Q_UNUSED(event)

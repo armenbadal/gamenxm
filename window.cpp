@@ -17,7 +17,3 @@ Window::Window( QWidget* parent )
     setCentralWidget(board);
 }
 
-/**/
-Window::~Window()
-{}
-

@@ -12,15 +12,11 @@ class Window : public QMainWindow {
 
 public:
     explicit Window( QWidget* parent = nullptr );
-    ~Window();
 
 private:
     Board* board = nullptr;
     GameNxM* engine = nullptr;
-
-signals:
-
-public slots:
 };
 
 #endif // WINDOW_H
+

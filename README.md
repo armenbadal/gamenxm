@@ -26,9 +26,6 @@
 Խաղը սկսվում է թվերի պատահական դասավորությամբ, որտեղ զրո թիվը գտնվում է ներքևի աջ անկյունում։ Այդ դասավորությունը պետք է _լուծելի_ լինի։ Այն է, պետք է հնարավոր լինի վերջավոր քանակի տեղափոխություններով (տրանսպոզիցիաներով) թվերը դասավորել աճման կարգով։ Այդ հնարավորությունը ապահովում է թվերի վեկտորի _ինվերսիաների_ զույգ լինելը։ (_լրացնել մաթեմատիկական հիմնավորմամբ_)
 
 
-## Իրականացման պահանջներ
-
-
 
 ## Խաղի տրամաբանության մոդելը
 
@@ -40,24 +37,26 @@
 class GameNxM {
 public:
     // Կոնստրուկտոր
-    GameNxM( unsigned int rw, unsigned int cl );
+    GameNxM( int rw, int cl );
 
     // Խաղի նախապատրաստում
     void reset();
 
     // Մեկ քայլի կատարում
-    void step( unsigned int rw, unsigned int cl );
+    void step( int rw, int cl );
 
     // Խաղի ավարտված լինելը
     bool gameOver() const;
 
     // Մատրիցի տրված բջջի արժեքը
-    int valueAt( unsigned int ro, unsigned int cl ) const;
+    int valueAt( int ro, int cl ) const;
 
 private:
-    unsigned int rows = 0; // տողերի քանակը
-    unsigned int columns = 0; // սյուների քանակը
+    int rows = 0; // տողերի քանակը
+    int columns = 0; // սյուների քանակը
     QVector<QVector<int>> matrix; // թվերի մատրիցը
+
+	int steps = 0; // քայլերի հաշվիչ
 };
 ````
 
@@ -66,7 +65,7 @@ private:
 Կոնստրուկտորը ստանում է թվերի մատրիցի տողերի և սյուների քանակը, և դրանք վերագրում է համապատասխանաբար դասի `rows` և `columns` անդամներին, ապա կանչում է նոր խաղ ստեղծող `reset` մեթոդը։
 
 ````c++
-GameNxM::GameNxM( unsigned int rw, unsigned int cl )
+GameNxM::GameNxM( int rw, int cl )
     : rows{rw}, columns{cl}
 {
     reset();
@@ -139,27 +138,154 @@ if( inv % 2 == 1 ) qSwap(rnums[0], rnums[1]);
 rnums.push_back(0);
 
 int nx = 0;
-for( unsigned int r = 1; r <= rows; ++r )
-    for( unsigned int c = 1; c <= columns; ++c )
+for( int r = 1; r <= rows; ++r )
+    for( int c = 1; c <= columns; ++c )
         matrix[r][c] = rnums[nx++];
 ````
 
 
 ### Մեկ քայլի կատարումը
 
-Խաղացողը կարող է տեղաշարժել միայն այն խաղաքարերը, որոնց հարևանությամբ գտնվում է դատատրկ վանդակը։ Խաղի մոդելի տեսակետից դատարկ է համարվում մատրիցի `0` թիվը պարունակող բջիջը։ 
+Խաղացողը կարող է տեղաշարժել միայն այն խաղաքարերը, որոնց հարևանությամբ գտնվում է դատատրկ վանդակը։ Խաղի մոդելի տեսակետից դատարկ է համարվում մատրիցի `0` թիվը պարունակող բջիջը։ `step` մեթոդն իր արգումենտում ստանում է տեղի և սյան ինդեքսներ։ Եթե այդ ինդեքսներով որոշվող բջջի չորս հարևաններից որևէ մեկը պարունակում է `0` արժեքը (դատարկ է), ապա նշված բջջի և զրոն պարունակող բջջի արժեքները փոխատեղվում են։ Ամեն մի փոփոխությունից հետո մեկով ավելացվում է քայլերի հաշվիչը։
+
 
 ````c++
-void GameNxM::step( unsigned int rw , unsigned int cl )
+void GameNxM::oneStep( int rw , int cl )
 {
-    if( matrix[rw-1][cl] == 0 )
+    if( matrix[rw-1][cl] == 0 ) {
         qSwap(matrix[rw][cl], matrix[rw-1][cl]);
-    else if( matrix[rw+1][cl] == 0 )
+        ++steps;
+    }
+    else if( matrix[rw+1][cl] == 0 ) {
         qSwap(matrix[rw][cl], matrix[rw+1][cl]);
-    else if( matrix[rw][cl-1] == 0 )
+        ++steps;
+    }
+    else if( matrix[rw][cl-1] == 0 ) {
         qSwap(matrix[rw][cl], matrix[rw][cl-1]);
-    else if( matrix[rw][cl+1] == 0 )
+        ++steps;
+    }
+    else if( matrix[rw][cl+1] == 0 ) {
         qSwap(matrix[rw][cl], matrix[rw][cl+1]);
+        ++steps;
+    }
 }
 ````
+
+Այս մեթոդի պարզությունը ստացվել է այն բանի շնորհիվ, որ մատրիցի պարագծով գրված են `-1` արժեքները։ Հակառակ դեպքում `step` մեթոդի ստուգումներն ավելի շատ ու ավելի բարդ կլինեին։
+
+
+### Խաղի ավարտի ստուգումը
+
+Խաղը համարվում է ավարտված, եթե `[1;N×M-1]` թվերը դասավորված են ճիշտ հաջորդականությամբ (աճման կարգով)։ `gameOver` մեթոդի `for` ցիկլն անցնում է այդ թվերով և ստուգում է, որ դրանք գրանցված լինեն ճիշտ ինդեքսներով։
+
+````c++
+bool GameNxM::gameOver() const
+{
+    for( int i = 1; i < rows * columns; ++i ) {
+        auto r = i / rows + 1;
+        auto c = i % rows;
+        if( matrix[r][c] != i ) return false;
+    }
+    return true;
+}
+````
+
+## Խաղաքարի մոդելը
+
+Ինձ անհրաժեշտ է, որ խաղաքարն ունենա որոշակի ֆիքսված հատկություններ․ չափ, եզրագիծ, տառատեսակ և այլն։ Բացի այդ, ես ուզում եմ, որ մկնիկի `click` ազդանշանին (signal) խաղաքարը արձագանքի իր տողի և սյան համարներով։ Qt գրադարանի `QLabel` օբյեկտն ամենահարման էր այնպիսի կարգավորումների համար։ Ես ընդլայնել եմ `QLabel` դասը որպես `Tile` (խաղաքար) դաս, նրանում ավելացնելով `clicked` ազդանշանը։
+
+````c++
+class Tile : public QLabel {
+    Q_OBJECT
+
+public:
+    Tile( int, int, QWidget* = nullptr );
+
+private:
+    int row;
+    int column;
+
+signals:
+    void clicked( int, int );
+
+protected:
+    void mousePressEvent( QMouseEvent* event ) override;
+};
+````
+
+`Tile` դասի `row` անդամը ցույց է տալիս, թե խաղաքարը խաղադաշտի որ տողի մեջ է, իսկ `column` անդամը՝ թե որ սյան մեջ է։ Այս անդամների արժեքները տրվում են կոնստրուկտրի առաջին երկու պարամետրերով (դրանք սկսվում են `1`-ից)։ Կոնստրուկտորի մեջ են որոշվում նաև խաղաքարի հիմնական հատկությունները։
+
+
+## Խաղադաշտի մոդելը
+
+Խաղադաշտը մոդելավորելու համար ես `QWidget` դասն ընդլայնել եմ որպես `Borad` (խաղադաշտ) դաս։ `rows` անդամը տողերի քանակն է, `columns` անդամը՝ սյուների, իսկ `tiles` ցուցակը պարունակում է խաղաքարերի հասցեները։ Կոնստրուկտորով տրվում են խաղադաշտի չափերը։
+
+````c++
+class Board : public QWidget {
+    Q_OBJECT
+
+public:
+    Board( int, int, QWidget* = nullptr );
+
+    void setModel( GameNxM* );
+
+private:
+    void updateLabels();
+
+private:
+    int rows = 0;
+    int columns = 0;
+    QVector<Tile*> tiles;
+
+    GameNxM* model = nullptr;
+
+private slots:
+    void clickedOnTile( int, int );
+};
+````
+
+Խաղադաշտի վրա խաղաքարերը դասավորվում են `QGridLayout`-ի օգնությամբ։ Եվ բոլոր խաղաքարերի `clicked` սիգնալը կապվում է `Board` դասի `clickedOnTile` սլոտին։ `clickedOnTile` սլոտը կատարում է խաղի մեկ քայլ՝ կանչելով մոդելի `step` մեթոդը, և թարմացնում է խաղաքարերի թվերը `Board` դասի `updateLabels` մեթոդով։
+
+````c++
+void Board::clickedOnTile( int r, int c )
+{
+    model->oneStep(r, c);
+    updateLabels();
+}
+```
+
+## Ծրագրի գլխավոր պատուհանը
+
+`Window` դասը Qt գրադարանի `QMainWindow` դասի ընդլայնումն է։ `board` նադամը խաղատախտակի ցուցիչն է, իսկ `model` անդամը խաղի մոդելի ցուցիչն է։
+
+````c++
+class Window : public QMainWindow {
+    Q_OBJECT
+public:
+    explicit Window( QWidget* parent = nullptr );
+
+private:
+    Board* board = nullptr;
+    GameNxM* engine = nullptr;
+};
+````
+
+Կոնստրուկտորը ստեղծում է խաղատախտակն ու խաղի մոդելը և դրանք կապում համապատասխան ցուցիչներին։ 
+
+````c++
+Window::Window( QWidget* parent )
+    : QMainWindow(parent)
+{
+    setWindowTitle( "Game NxM");
+
+    board = new Board(4, 4, this);
+    engine = new GameNxM(4, 4);
+    board->setModel(engine);
+
+    setCentralWidget(board);
+}
+````
+
+
+
 

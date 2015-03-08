@@ -18,17 +18,13 @@ Board::Board( unsigned int rw, unsigned int cl, QWidget* parent )
 
     for( unsigned int r = 0; r < rows; ++r )
         for( unsigned int c = 0; c < columns; ++c ) {
-            auto atile = new Tile(r, c, this);
+            auto atile = new Tile(r+1, c+1, this);
             baseGrid->addWidget(atile, r, c);
             connect(atile, SIGNAL(clicked(unsigned int,unsigned int)),
                     this, SLOT(clickedOnTile(unsigned int,unsigned int)));
             tiles.push_back(atile);
         }
 }
-
-/**/
-Board::~Board()
-{}
 
 /**/
 void Board::setModel( GameNxM* mo )
@@ -45,7 +41,7 @@ void Board::updateLabels()
             for( size_t c = 0; c < columns; ++c ) {
                 auto mk = model->valueAt(r, c);
                 auto sk = mk == 0 ? QString{""} : QString::number(mk);
-                tiles[r * rows + c]->setText(sk);
+                tiles[r * columns + c]->setText(sk);
             }
     }
 }
@@ -53,7 +49,7 @@ void Board::updateLabels()
 /**/
 void Board::clickedOnTile( unsigned int r, unsigned int c )
 {
-    model->step(r+1, c+1);
+    model->oneStep(r, c);
     updateLabels();
 }
 

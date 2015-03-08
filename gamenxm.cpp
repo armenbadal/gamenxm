@@ -6,7 +6,7 @@
 #include "gamenxm.h"
 
 /**/
-GameNxM::GameNxM( unsigned int rw, unsigned int cl )
+GameNxM::GameNxM( int rw, int cl )
     : rows{rw}, columns{cl}
 {
     reset();
@@ -17,7 +17,7 @@ void GameNxM::reset()
 {
     // ամբողջ մատրիցի նախապատրաստում
     matrix.clear();
-    for( uint r = 0; r < rows + 2; ++r )
+    for( int r = 0; r < rows + 2; ++r )
         matrix.push_back( QVector<int>(columns + 2, -1) );
 
     // rows x columns հատ թվեր
@@ -26,7 +26,8 @@ void GameNxM::reset()
     std::iota(rnums.begin(), rnums.end(), 1);
 
     // թվերի խառնում
-    auto re = std::default_random_engine{};
+    std::random_device rd{};
+    auto re = std::default_random_engine{rd()};
     std::shuffle(rnums.begin(), rnums.end(), re);
 
     // ինվերսիաների քանակի ստուգում
@@ -43,37 +44,45 @@ void GameNxM::reset()
 
     // խաղադաշտի արժեքավորում պատահական դասավորությամբ
     int nx = 0;
-    for( unsigned int r = 1; r <= rows; ++r )
-        for( unsigned int c = 1; c <= columns; ++c )
+    for( int r = 1; r <= rows; ++r )
+        for( int c = 1; c <= columns; ++c )
             matrix[r][c] = rnums[nx++];
 }
 
 /**/
-void GameNxM::step( unsigned int rw , unsigned int cl )
+void GameNxM::oneStep( int rw , int cl )
 {
-    if( matrix[rw-1][cl] == 0 )
+    if( matrix[rw-1][cl] == 0 ) {
         qSwap(matrix[rw][cl], matrix[rw-1][cl]);
-    else if( matrix[rw+1][cl] == 0 )
+        ++steps;
+    }
+    else if( matrix[rw+1][cl] == 0 ) {
         qSwap(matrix[rw][cl], matrix[rw+1][cl]);
-    else if( matrix[rw][cl-1] == 0 )
+        ++steps;
+    }
+    else if( matrix[rw][cl-1] == 0 ) {
         qSwap(matrix[rw][cl], matrix[rw][cl-1]);
-    else if( matrix[rw][cl+1] == 0 )
+        ++steps;
+    }
+    else if( matrix[rw][cl+1] == 0 ) {
         qSwap(matrix[rw][cl], matrix[rw][cl+1]);
+        ++steps;
+    }
 }
 
 /**/
 bool GameNxM::gameOver() const
 {
-    for( int i = 0; i < rows * columns; ++i ) {
-        auto r = i / rows + 1;
-        auto c = i % rows;
-        if( matrix[r][c] != i ) return false; // TODO: Check this
+    for( int i = 1; i < rows * columns; ++i ) {
+        auto r = i / columns + 1;
+        auto c = i % columns;
+        if( matrix[r][c] != i ) return false;
     }
     return true;
 }
 
 /**/
-int GameNxM::valueAt( unsigned int ro, unsigned int cl ) const
+int GameNxM::valueAt( int ro, int cl ) const
 {
     return matrix.at(ro+1).at(cl+1);
 }

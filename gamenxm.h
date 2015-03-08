@@ -3,7 +3,7 @@
 
 #include <QVector>
 
-/* Խաղի տրամաբանությունը */
+/** @brief Խաղի տրամաբանությունը */
 class GameNxM {
 public:
     /** @brief Կոնստրուկտոր
@@ -11,7 +11,7 @@ public:
      * @param rw տողերի քանակը
      * @param cl սյուների քանակը
      */
-    GameNxM( unsigned int rw, unsigned int cl );
+    GameNxM( int rw, int cl );
 
     /** @brief Խաղի նախապատրաստում */
     void reset();
@@ -21,7 +21,7 @@ public:
      * @param rw տեղաշարժվող խաղաքարի տողի համարը
      * @param cl տեղաշարժվող խաղաքարի սյան համարը
      */
-    void step( unsigned int rw, unsigned int cl );
+    void oneStep( int rw, int cl );
 
     /** @brief Խաղի ավարտված լինելը */
     bool gameOver() const;
@@ -31,15 +31,18 @@ public:
      * @param ro տողի համարը
      * @param cl սյան համարը
      */
-    int valueAt( unsigned int ro, unsigned int cl ) const;
+    int valueAt( int ro, int cl ) const;
 
 private:
     /// @brief Տողերի քանակը
-    unsigned int rows = 0;
+    int rows = 0;
     /// @brief Սյուների քանակը
-    unsigned int columns = 0;
+    int columns = 0;
     /// @brief Թվերի մատրիցը
     QVector<QVector<int>> matrix;
+
+    /// @brief Քայլերի քանակ
+    int steps = 0;
 };
 
 #endif // GAMENXM_H
