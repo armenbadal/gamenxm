@@ -256,7 +256,7 @@ void Board::clickedOnTile( int r, int c )
 
 ## Ծրագրի գլխավոր պատուհանը
 
-`Window` դասը Qt գրադարանի `QMainWindow` դասի ընդլայնումն է։ `board` նադամը խաղատախտակի ցուցիչն է, իսկ `model` անդամը խաղի մոդելի ցուցիչն է։
+`Window` դասը Qt գրադարանի `QMainWindow` դասի ընդլայնումն է։ `board` անդամը խաղատախտակի ցուցիչն է, իսկ `model` անդամը խաղի մոդելի ցուցիչն է։
 
 ````c++
 class Window : public QMainWindow {
@@ -286,6 +286,24 @@ Window::Window( QWidget* parent )
 }
 ````
 
+
+## Մենյուները
+
+Ծրագրի մենյուների տողը, որը `QMenuBar` տիպի օբյեկտ է, պետք է ունենա երկու մենյու՝ `Խաղ` և `Հուշում`, որոնք էլ `QMenu` տիպի օբյեկտներ են։ `Window` դասում հայտարարեմ համապատասխան ցուցիչները․
+
+````c++
+QMenuBar* mainMenu = nullptr;
+QMenu* mnuGame = nullptr;
+QMenu* mnuHelp = nullptr;
+````
+
+Մենյուներում պետք է ավելացնել գործողություններ (`QAction`)։ Դրանց համար նույնպես հայտարարեմ ցուցիչներ․
+
+````c++
+QAction* actNew = nullptr; // նոր խաղ
+QAction* actEnd = nullptr; // ելք ծրագրից
+QAction* actAbout = nullptr; // ծարագրի մասին
+````
 
 
 
