@@ -23,6 +23,9 @@ public:
      */
     void step( unsigned int rw, unsigned int cl );
 
+    /** @brief Խաղի ավարտված լինելը */
+    bool gameOver() const;
+
     /** @brief Մատրիցի ծրված բջջի արժեքը
      *
      * @param ro տողի համարը
