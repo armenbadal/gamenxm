@@ -17,3 +17,8 @@ HEADERS += \
     board.h \
     window.h \
     gamenxm.h
+
+RESOURCES += \
+    gamenxm.qrc
+
+TRANSLATIONS = gamenxm_hy.ts

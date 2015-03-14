@@ -51,5 +51,6 @@ void Board::clickedOnTile( unsigned int r, unsigned int c )
 {
     model->oneStep(r, c);
     updateLabels();
+    emit updateStatus();
 }
 

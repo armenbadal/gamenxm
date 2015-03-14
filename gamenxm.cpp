@@ -47,6 +47,9 @@ void GameNxM::reset()
     for( int r = 1; r <= rows; ++r )
         for( int c = 1; c <= columns; ++c )
             matrix[r][c] = rnums[nx++];
+
+    // ոայլերի քանակը զրո է
+    steps = 0;
 }
 
 /**/
@@ -71,11 +74,11 @@ void GameNxM::oneStep( int rw , int cl )
 }
 
 /**/
-bool GameNxM::gameOver() const
+bool GameNxM::isOver() const
 {
     for( int i = 1; i < rows * columns; ++i ) {
-        auto r = i / columns + 1;
-        auto c = i % columns;
+        auto r = (i - 1) / columns + 1;
+        auto c = (i - 1) % columns + 1;
         if( matrix[r][c] != i ) return false;
     }
     return true;

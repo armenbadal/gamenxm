@@ -24,7 +24,7 @@ public:
     void oneStep( int rw, int cl );
 
     /** @brief Խաղի ավարտված լինելը */
-    bool gameOver() const;
+    bool isOver() const;
 
     /** @brief Մատրիցի ծրված բջջի արժեքը
      *
@@ -32,6 +32,10 @@ public:
      * @param cl սյան համարը
      */
     int valueAt( int ro, int cl ) const;
+
+    /** @brief Քայլերի քանակը*/
+    int getSteps() const
+    { return steps; }
 
 private:
     /// @brief Տողերի քանակը

@@ -31,6 +31,9 @@ private:
     /// @brief ցուցիչ խաղի մոդելին
     GameNxM* model = nullptr;
 
+signals:
+    void updateStatus();
+
 private slots:
     /** @brief Խաղաքարի ընտրության մշակում */
     void clickedOnTile( unsigned int, unsigned int );
